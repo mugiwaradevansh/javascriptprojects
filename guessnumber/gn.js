@@ -1,93 +1,85 @@
-const randomNumber = parseInt(Math.random() * 100 + 1);
+document.addEventListener("DOMContentLoaded", () => {
+  const randomNumber = Math.floor(Math.random() * 100) + 1;
 
-const submit = document.querySelector("#subt");
-const userInput = document.querySelector("#guessField");
-const guessSlot = document.querySelector(".guesses");
-const remaining = document.querySelector(".lastResult");
-const lowOrHi = document.querySelector(".lowOrHi");
-const startOver = document.querySelector(".resultParas");
+  const submit = document.querySelector("#subt");
+  const userInput = document.querySelector("#guessField");
+  const guessSlot = document.querySelector(".guesses");
+  const remaining = document.querySelector(".lastResult");
+  const lowOrHi = document.querySelector(".lowOrHi");
+  const startOver = document.querySelector(".resultParas");
 
-const p = document.createElement("p");
+  let prevGuess = [];
+  let numGuess = 1;
+  let playGame = true;
 
-let prevGuess = [];
-let numGuess = 1;
-
-let playGame = true;
-
-if (playGame) {
-  submit.addEventListener("click", function (e) {
-    e.preventDefault();
-    const guess = parseInt(userInput.value);
-    validateGuess(guess);
-  });
-}
-
-function validateGuess(guess) {
-  //
-  if (isNaN(guess)) {
-    alert("Please Enter a valid number");
-  } else if (guess <= 1) {
-    alert("Please Enter the number greater than the 0");
-  } else if (guess > 100) {
-    alert("Please Enter the number less than 100");
-  } else {
-    prevGuess.push(guess);
-
-    if (numGuess === 11) {
-      displayMessage(guess);
-      displayMessage(`Game Over.RandomNumber was ${randomNumber}`);
-      endGame();
+  const validateGuess = (guess) => {
+    if (isNaN(guess)) {
+      alert("Please enter a valid number");
+    } else if (guess <= 0) {
+      alert("Please enter a number greater than 0");
+    } else if (guess > 100) {
+      alert("Please enter a number less than or equal to 100");
     } else {
-      displayMessage(guess);
+      prevGuess.push(guess);
+      displayGuess(guess);
       checkGuess(guess);
     }
-  }
-}
+  };
 
-function checkGuess(guess) {
-  //
-  if(guess === randomNumber){
-    displayMessage('OH Great you guess right it')
-    endGame()
-  }
-  else if(guess > randomNumber){
-    displayMessage(`Number is TOOO high`)
-  }
-  else if(guess < randomNumber ){
-    displayMessage(`Number is TOOO low`)
-  }
+  const checkGuess = (guess) => {
+    if (guess === randomNumber) {
+      displayMessage("Oh Great! You guessed it right!");
+      endGame();
+    } else if (guess > randomNumber) {
+      displayMessage("Number is TOO high");
+    } else {
+      displayMessage("Number is TOO low");
+    }
 
-}
+    if (numGuess === 10) {
+      displayMessage(`Game Over. Random number was ${randomNumber}`);
+      endGame();
+    }
+  };
 
-function displayGuess(guess) {
-  //
-  userInput.value = ''
-  guessSlot.innerHTML +=`${guess}`
-  numGuess++;
-  remaining.innerHTML =`${11 - numGuess}`
-}
+  const displayGuess = (guess) => {
+    userInput.value = "";
+    guessSlot.innerHTML += `${guess} `;
+    numGuess++;
+    remaining.innerHTML = `${11 - numGuess}`;
+  };
 
-function displayMessage(message) {
-  //
-  lowOrHi.innerHTML = `<h2> ${message}</h2>`;
-}
+  const displayMessage = (message) => {
+    lowOrHi.innerHTML = `<h2>${message}</h2>`;
+  };
 
-function endGame() { 
-  //
-    userInput.value = ''
-    userInput.setAttribute('disabled','')
-    p.classList.add('button')
-    p.innerHTML = `<h2 id ="newGame"> Start new Game</h2>`
+  const endGame = () => {
+    userInput.setAttribute("disabled", "");
+    const p = document.createElement("button");
+    p.textContent = "Start New Game";
     startOver.appendChild(p);
     playGame = false;
-    newGame();
-}
 
-function newGame() {
-  //
-    const newGameButtton =document.querySelector('#newGame')
-    newGameButtton.addEventListener('click', function(e){
-      e.preventDefault()
-      location.reload()
-    })
-}
+    p.addEventListener("click", () => {
+      location.reload();
+    });
+  };
+
+  if (playGame) {
+    submit.addEventListener("click", (e) => {
+      e.preventDefault();
+      const guess = parseInt(userInput.value);
+      validateGuess(guess);
+    });
+  }
+
+  // Water waves effect
+  const waterEffect = document.createElement("div");
+  waterEffect.id = "water-effect";
+  document.body.appendChild(waterEffect);
+
+  document.addEventListener("mousemove", (e) => {
+    const { clientX: x, clientY: y } = e;
+    waterEffect.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(0, 245, 0,0.29), rgba(24, 156, 171,0.50) 350px)`;
+  });
+});
